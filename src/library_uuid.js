@@ -35,12 +35,16 @@ mergeInto(LibraryManager.library, {
         var rb = require('crypto').randomBytes;
         uuid = rb(16);
       } catch(e) {}
-    } else if (ENVIRONMENT_IS_WEB &&
-               typeof(window.crypto) !== 'undefined' && 
-               typeof(window.crypto.getRandomValues) !== 'undefined') {
-      // If crypto.getRandomValues is available try to use it.
-      uuid = new Uint8Array(16);
-      window.crypto.getRandomValues(uuid);
+    } else if (ENVIRONMENT_IS_WEB) {
+      if (typeof crypto !== 'undefined') {
+        // If crypto.getRandomValues is available try to use it.
+        uuid = new Uint8Array(16);
+        window.crypto.getRandomValues(uuid);
+      } else if (typeof msCrypto !== 'undefined') {
+        // Try namedspaced version for IE
+        uuid = new Uint8Array(16);
+        window.msCrypto.getRandomValues(uuid);
+      }
     }
 
     // Fall back to Math.random if a higher quality random number generator is not available.

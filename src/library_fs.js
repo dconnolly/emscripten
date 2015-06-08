@@ -1248,10 +1248,16 @@ mergeInto(LibraryManager.library, {
       FS.mkdev('/dev/tty1', FS.makedev(6, 0));
       // setup /dev/[u]random
       var random_device;
-      if (typeof crypto !== 'undefined') {
-        // for modern web browsers
-        var randomBuffer = new Uint8Array(1);
-        random_device = function() { crypto.getRandomValues(randomBuffer); return randomBuffer[0]; };
+      if (ENVIRONMENT_IS_WEB) {
+        if (typeof crypto !== 'undefined') {
+          // for modern web browsers
+          var randomBuffer = new Uint8Array(1);
+          random_device = function() { crypto.getRandomValues(randomBuffer); return randomBuffer[0]; };
+        } else if (typeof msCrypto !== 'undefined') {
+          // IE support is prefixed
+          var randomBuffer = new Uint8Array(1);
+          random_device = function() { msCrypto.getRandomValues(randomBuffer); return randomBuffer[0]; };
+        }
       } else if (ENVIRONMENT_IS_NODE) {
         // for nodejs
         random_device = function() { return require('crypto').randomBytes(1)[0]; };

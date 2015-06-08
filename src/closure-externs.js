@@ -11,6 +11,12 @@
 /**
  * @param {Array} typedArray
  */
+msCrypto.getRandomValues = function(typedArray) {};
+
+
+/**
+ * @param {Array} typedArray
+ */
 crypto.getRandomValues = function(typedArray) {};
 
 /**
